@@ -1,23 +1,20 @@
-# Multi-arch docker container instance of the open-source home assistant project intended for Open Horizon Linux edge nodes
+# Multi-arch docker container instance of the open-source kubearmor project intended for Open Horizon Linux edge nodes
 
-export DOCKER_IMAGE_BASE ?= ghcr.io/home-assistant/home-assistant
-export DOCKER_IMAGE_NAME ?= homeassistant
-export DOCKER_IMAGE_VERSION ?= latest
-export DOCKER_VOLUME_NAME ?= homeassistant_config
+export DOCKER_IMAGE_BASE ?= kubearmor/kubearmor
+export DOCKER_IMAGE_NAME ?= kubearmor
+export DOCKER_IMAGE_VERSION ?= stable
+export DOCKER_VOLUME_NAME ?= kubearmor_config
 
 # DockerHub ID of the third party providing the image (usually yours if building and pushing)
-export DOCKER_HUB_ID ?= homeassistant
+export DOCKER_HUB_ID ?= kubearmor
 
 # The Open Horizon organization ID namespace where you will be publishing the service definition file
 export HZN_ORG_ID ?= examples
 
-# Variables required by Home Assistant, can be overridden by your environment variables
-export MY_TIME_ZONE ?= America/New_York
-
 # Open Horizon settings for publishing metadata about the service
-export DEPLOYMENT_POLICY_NAME ?= deployment-policy-homeassistant
-export NODE_POLICY_NAME ?= node-policy-homeassistant
-export SERVICE_NAME ?= service-homeassistant
+export DEPLOYMENT_POLICY_NAME ?= deployment-policy-kubearmor
+export NODE_POLICY_NAME ?= node-policy-kubearmor
+export SERVICE_NAME ?= service-kubearmor
 export SERVICE_VERSION ?= 0.0.1
 
 # Default ARCH to the architecture of this machine (assumes hzn CLI installed)
@@ -26,24 +23,24 @@ export ARCH ?= amd64
 # Detect Operating System running Make
 OS := $(shell uname -s)
 
-default: init run browse
+default: init run
 
 check:
 	@echo "====================="
 	@echo "ENVIRONMENT VARIABLES"
 	@echo "====================="
-	@echo "DOCKER_IMAGE_BASE      default: ghcr.io/home-assistant/home-assistant actual: ${DOCKER_IMAGE_BASE}"
-	@echo "DOCKER_IMAGE_NAME      default: homeassistant                         actual: ${DOCKER_IMAGE_NAME}"
-	@echo "DOCKER_IMAGE_VERSION   default: latest                                actual: ${DOCKER_IMAGE_VERSION}"
-	@echo "DOCKER_VOLUME_NAME     default: homeassistant_config                  actual: ${DOCKER_VOLUME_NAME}"
-	@echo "DOCKER_HUB_ID           default: homeassistant                         actual: ${DOCKER_HUB_ID}"
-	@echo "HZN_ORG_ID             default: examples                              actual: ${HZN_ORG_ID}"
-	@echo "MY_TIME_ZONE           default: America/New_York                      actual: ${MY_TIME_ZONE}"
-	@echo "DEPLOYMENT_POLICY_NAME default: deployment-policy-homeassistant       actual: ${DEPLOYMENT_POLICY_NAME}"
-	@echo "NODE_POLICY_NAME       default: node-policy-homeassistant             actual: ${NODE_POLICY_NAME}"
-	@echo "SERVICE_NAME           default: service-homeassistant                 actual: ${SERVICE_NAME}"
-	@echo "SERVICE_VERSION        default: 0.0.1                                 actual: ${SERVICE_VERSION}"
-	@echo "ARCH                   default: amd64                                 actual: ${ARCH}"
+	@echo "DOCKER_IMAGE_BASE      default: kubearmor/kubearmor         actual: ${DOCKER_IMAGE_BASE}"
+	@echo "DOCKER_IMAGE_NAME      default: kubearmor                   actual: ${DOCKER_IMAGE_NAME}"
+	@echo "DOCKER_IMAGE_VERSION   default: stable                      actual: ${DOCKER_IMAGE_VERSION}"
+	@echo "DOCKER_VOLUME_NAME     default: kubearmor_config            actual: ${DOCKER_VOLUME_NAME}"
+	@echo "DOCKER_HUB_ID           default: kubearmor                  actual: ${DOCKER_HUB_ID}"
+	@echo "HZN_ORG_ID             default: examples                    actual: ${HZN_ORG_ID}"
+	@echo "MY_TIME_ZONE           default: America/New_York            actual: ${MY_TIME_ZONE}"
+	@echo "DEPLOYMENT_POLICY_NAME default: deployment-policy-kubearmor actual: ${DEPLOYMENT_POLICY_NAME}"
+	@echo "NODE_POLICY_NAME       default: node-policy-kubearmor       actual: ${NODE_POLICY_NAME}"
+	@echo "SERVICE_NAME           default: service-kubearmor           actual: ${SERVICE_NAME}"
+	@echo "SERVICE_VERSION        default: 0.0.1                       actual: ${SERVICE_VERSION}"
+	@echo "ARCH                   default: amd64                       actual: ${ARCH}"
 	@echo ""
 	@echo "=================="
 	@echo "SERVICE DEFINITION"
@@ -76,13 +73,6 @@ attach:
 test:
 	@curl -sS http://127.0.0.1:8123
 
-browse:
-ifeq ($(OS),Darwin)
-	@open http://127.0.0.1:8123
-else
-	@xdg-open http://127.0.0.1:8123
-endif
-
 clean: stop
 	@docker rmi -f $(DOCKER_IMAGE_BASE):$(DOCKER_IMAGE_VERSION) >/dev/null 2>&1 || :
 	@docker volume rm $(DOCKER_VOLUME_NAME)
@@ -95,7 +85,7 @@ build:
 push:
 	@echo "There is no Docker image push process since this container is provided by a third-party from official sources."
 
-publish: publish-service publish-service-policy publish-deployment-policy agent-run browse
+publish: publish-service publish-service-policy publish-deployment-policy agent-run
 
 # Pull, not push, Docker image since provided by third party
 publish-service:
@@ -168,4 +158,4 @@ log:
 	@echo "==========="
 	@hzn service log -f $(SERVICE_NAME)
 
-.PHONY: default stop init run dev test clean build push attach browse publish publish-service publish-service-policy publish-deployment-policy publish-pattern agent-run distclean deploy-check check log remove-deployment-policy remove-service-policy remove-service
+.PHONY: default stop init run dev test clean build push attach publish publish-service publish-service-policy publish-deployment-policy publish-pattern agent-run distclean deploy-check check log remove-deployment-policy remove-service-policy remove-service

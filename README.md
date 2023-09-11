@@ -7,7 +7,7 @@ This is an Open Horizon configuration to deploy a vanilla instance of the open-s
 
 **Management Hub:** [Install the Open Horizon Management Hub](https://open-horizon.github.io/quick-start) or have access to an existing hub in order to publish this service and register your edge node.  You may also choose to use a downstream commercial distribution based on Open Horizon, such as IBM's Edge Application Manager.  If you'd like to use the Open Horizon community hub, you may [apply for a temporary account](https://wiki.lfedge.org/display/LE/Open+Horizon+Management+Hub+Developer+Instance) and have credentials sent to you.
 
-**Edge Node:** You will need an x86 computer running Linux or macOS, or a Raspberry Pi computer (arm64) running Raspberry Pi OS or Ubuntu to install and use Home Assistant deployed by Open Horizon.  You will need to install the Open Horizon agent software, anax, on the edge node and register it with a hub.
+**Edge Node:** You will need an x86 computer running Linux, or a Raspberry Pi computer (arm64) running Raspberry Pi OS or Ubuntu to install and use KubeArmor deployed by Open Horizon.  You will need to install the Open Horizon agent software, anax, on the edge node and register it with a hub.
 
 **Optional utilities to install:**  With `brew` on macOS (you may need to install _that_ as well), `apt-get` on Ubuntu or Raspberry Pi OS, `yum` on Fedora, install `gcc`, `make`, `git`, `jq`, `curl`, `net-tools`.  Not all of those may exist on all platforms, and some may already be installed.  But reflexively installing those has proven helpful in having the right tools available when you need them.
 
@@ -56,9 +56,9 @@ curl -sSL https://github.com/open-horizon/anax/releases/latest/download/agent-in
 
 ## Usage
 
-To manually run Home Assistant locally as a test, enter `make`.  This will open a browser window, but it may do so before Home Assistant is completely ready.  If you get a blank web page, wait about 10 seconds or so and reload the page.  Running `make attach` will connect you to a prompt running inside the container, and you can end that session by entering `exit`.  When you are done, run `make stop` in the terminal to end the test.
+To check how to operate KubeArmor, please follow [this ref](https://open-horizon.github.io/docs/kubearmor-integration/docs/README/).
 
-To create [the service definition](https://github.com/open-horizon/examples/blob/master/edge/services/helloworld/CreateService.md#build-publish-your-hw), publish it to the hub, and then form an agreement to download and run Home Assistant, enter `make publish`.  When installation is complete and an agreement has been formed, exit the watch command with Control-C.  You may then open a browser pointing to Home Assistant by entering `make browse` or visiting [http://localhost:8123/](http://localhost:8123/) in a web browser.
+To create [the service definition](https://github.com/open-horizon/examples/blob/master/edge/services/helloworld/CreateService.md#build-publish-your-hw), publish it to the hub, and then form an agreement to download and run KubeArmor, enter `make publish`.  When installation is complete and an agreement has been formed, exit the watch command with Control-C.
 
 ## Advanced details
 
@@ -76,18 +76,15 @@ The Makefile includes several targets to assist you in inspecting what is happen
 
 `make attach` to connect to the running container and open a shell inside it.
 
-> **Note** The service-kubearmor-security container by default runs in un-privileged mode, but it may require privileged conditions in certain cases (For eg: to detect specific hardware, for more information please ref. <https://github.com/home-assistant/home-assistant.io/issues/18014>). In that case you can manually add "--privileged" flag in the Makefile under `docker-run` command.
-
 ### All Makefile targets
 
 * `default` - init run browse
 * `init` - optionally create the docker volume
-* `run` - manually run the homeassistant container locally as a test
-* `browse` - open the Home Assistant UI in a web browser
+* `run` - manually run the kubearmor container locally as a test
 * `check` - view current settings
 * `stop` - halt a locally-run container
-* `dev` - manually run homeassistant locally and connect to a terminal in the container
-* `attach` - connect to a terminal in the homeassistant container
+* `dev` - manually run kubearmor locally and connect to a terminal in the container
+* `attach` - connect to a terminal in the kubearmor container
 * `test` - request the web UI from the terminal to confirm that it is running and available
 * `clean` - remove the container image and docker volume
 * `distclean` - clean (see above) AND unregister the node and remove the service files from the hub
