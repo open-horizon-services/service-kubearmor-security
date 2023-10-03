@@ -55,13 +55,26 @@ init:
 	@docker volume create $(DOCKER_VOLUME_NAME)
 
 run: stop
+	@docker run -v /tmp/:/opt/kubearmor/BPF --privileged kubearmor/kubearmor-init:latest
 	@docker run -d \
 		--name $(DOCKER_IMAGE_NAME) \
 		--restart=unless-stopped \
 		-e TZ=$(MY_TIME_ZONE) \
 		-v $(DOCKER_VOLUME_NAME):/config \
-		-p 8123:8123 \
-		$(DOCKER_IMAGE_BASE):$(DOCKER_IMAGE_VERSION)
+		-p 32767:32767 \
+		-v /tmp/:/opt/kubearmor/BPF \
+		-v /sys/fs/bpf:/sys/fs/bpf \
+		-v /sys/kernel/security:/sys/kernel/security \
+		-v /sys/kernel/debug:/sys/kernel/debug \
+		-v /etc/apparmor.d:/etc/apparmor.d \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		-v /run/docker:/run/docker \
+		-v /var/lib/docker:/var/lib/docker \
+		--privileged \
+		--pid=host \
+		--ipc=host \
+		$(DOCKER_IMAGE_BASE):$(DOCKER_IMAGE_VERSION) \
+		-k8s=false
 
 dev: run attach
 
