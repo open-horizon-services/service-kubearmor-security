@@ -23,5 +23,8 @@
 				"image": "$DOCKER_IMAGE_BASE:$DOCKER_IMAGE_VERSION"
 			}
 		}
-   }
+	},
+	"clusterDeployment": {
+	        "operatorYamlArchive": "./operator.tar.gz"
+	}
 }
